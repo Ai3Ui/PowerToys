@@ -1,0 +1,54 @@
+telemetry:
+  allowTelemetry: false
+  allowSpoofing: true
+  requireExplicitConsent: true
+  allowedDestinations:
+    - localhost
+modes:
+  - name: Privacy
+    description: Lock everything down while still enabling contextual overlays.
+    signals:
+      consent: granted
+      persona: guardian
+    budget:
+      telemetrySamplingRate: 0.1
+      allowSessionReplay: false
+      allowExternalCalls: false
+  - name: Gaming
+    description: Prioritize latency and automation macros.
+    signals:
+      persona: gamer
+    budget:
+      telemetrySamplingRate: 0.6
+      allowSessionReplay: true
+      allowExternalCalls: true
+overlays:
+  - id: privacy-shield
+    title: Privacy Shield
+    description: Spoofs fingerprinting beacons and enforces telemetry firewall.
+    priority: 20
+    modes: [Privacy]
+    tools: [privacy-ai, consent-auditor]
+    matchRules:
+      - hostPattern: "*.finance.com"
+        protocols: [https]
+        signalRequirements:
+          consent: granted
+  - id: gaming-hud
+    title: Gaming HUD
+    description: Provides low-latency overlays for streaming and macros.
+    priority: 10
+    modes: [Gaming]
+    tools: [gaming-metrics, macro-recorder]
+    matchRules:
+      - hostPattern: "arena.*"
+        protocols: [https]
+        requiredTags: [gaming]
+  - id: dev-console
+    title: Dev Console
+    description: Debugging overlays for developers.
+    priority: 5
+    tools: [dev-inspector, ai-refactor]
+    matchRules:
+      - hostPattern: "*.dev"
+        pathPattern: "/docs/*"
